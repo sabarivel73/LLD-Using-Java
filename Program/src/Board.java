@@ -5,7 +5,7 @@ public class Board {
     private List<List<Character>>board;
     public Board(){
         board = new ArrayList<>();
-        for(int i=0;i<3;i++)
+        for(int i=0;i<5;i++)
         {
             List<Character>value = new ArrayList<>();
             for(int j=0;j<3;j++)
