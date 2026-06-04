@@ -73,31 +73,3 @@ public class Main {
         account2.calculateInterest();
     }
 }
-/*
-#include<bits/stdc++.h>
-using namespace std;
-bool fun(int i, int n, int cc, int m, vector<int>& c, vector<vector<int>>& a) {
-  if(i>=n) return true;
-  vector<int>v1 = a[i];
-  c[i] = cc;
-  for(int j=0;j<v1.size();j++) {
-    if(c[v1[j]]!=-1 && c[v1[j]]==cc) return false;
-    else if(c[v1[j]]==-1) {
-      if(!fun(v1[j], n, cc+1, m, c, a)) return false;
-    }
-  }
-  return true;
-}
-int main() {
-  int n = 4, m = 3;
-  vector<vector<int>>e = {{0,1},{1,2},{2,3},{3,0},{0,2}};
-  vector<vector<int>>a(n);
-  for(int i=0;i<e.size();i++) {
-    a[e[i][0]].push_back(e[i][1]);
-    a[e[i][1]].push_back(e[i][0]);
-  }
-  vector<int>c(n,-1);
-  cout<<fun(0,n,1,m,c,a);
-  return 0;
-}
- */
