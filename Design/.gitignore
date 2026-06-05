@@ -1,7 +1,8 @@
 ### IntelliJ IDEA ###
-.idea
-
-out/*
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+.kotlin
 
 ### Eclipse ###
 .apt_generated
@@ -27,5 +28,3 @@ bin/
 
 ### Mac OS ###
 .DS_Store
-
-.idea
