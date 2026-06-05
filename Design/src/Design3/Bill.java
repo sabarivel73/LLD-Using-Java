@@ -2,23 +2,17 @@ package Design3;
 
 public class Bill {
     private long totalTime;
-    private Integer totalAmount;
+    private long totalAmount;
     private Boolean status;
 
     public long getTotalTime() {
         return totalTime;
     }
 
-    public void setTotalTime(long totalTime) {
-        this.totalTime = totalTime;
-    }
+    public void setTotalTime(long totalTime) { this.totalTime = totalTime; }
 
-    public Integer getTotalAmount() {
+    public long getTotalAmount() {
         return totalAmount;
-    }
-
-    public void setTotalAmount(Integer totalAmount) {
-        this.totalAmount = totalAmount;
     }
 
     public Boolean getStatus() {
@@ -27,5 +21,9 @@ public class Bill {
 
     public void setStatus(Boolean status) {
         this.status = status;
+    }
+
+    public void calculateBill() {
+        totalAmount = Math.round(totalTime * 0.0208333333);
     }
 }

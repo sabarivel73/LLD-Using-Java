@@ -1,6 +1,5 @@
 package Design3;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
@@ -53,6 +52,16 @@ public class Main {
 
     static void message() {
         IO.println("Sorry currently we don't have enough space to park your vehicle, please book your slot after some time\n");
+    }
+
+    static String check(Scanner scanner) {
+        IO.print("Please enter your vehicle number : ");
+        String num = scanner.nextLine();
+        if(!Details.value.containsKey(num)) {
+            IO.print("\nThis vehicle number was not found, please enter correct vehicle number\n");
+            return "";
+        }
+        return num;
     }
 
     static void start(Scanner scanner, Details d1) {
@@ -129,36 +138,37 @@ public class Main {
     }
 
     static void view(Scanner scanner, DateTimeFormatter value) {
-        IO.print("Please enter your vehicle number : ");
-        String num = scanner.nextLine();
-        if(!Details.value.containsKey(num)) {
-            IO.print("\nThis vehicle number was not found, please enter correct vehicle number\n");
-            return;
-        }
+        String num = check(scanner);
+        if(num.isEmpty()) return;
         VB vd = Details.value.get(num);
         print(num, vd.getVehicle());
+        bill(scanner, value);
         IO.print("\n");
     }
 
     static Boolean bill(Scanner scanner, DateTimeFormatter value) {
-        IO.print("Please enter your vehicle number : ");
-        String num = scanner.nextLine();
-        if(!Details.value.containsKey(num)) {
-            IO.print("\nThis vehicle number was not found, please enter correct vehicle number\n");
-            return false;
-        }
+        String num = check(scanner);
+        if(num.isEmpty()) return false;
         LocalDateTime out = LocalDateTime.now();
         VB vd = Details.value.get(num);
+        long totalTime = vd.getVehicle().calculateTime(out);
+        IO.print("Total time in form of minutes : " + totalTime);
+        IO.print("\nIf you want to generate your bill, please enter 1 else 2 : ");
+        if(scanner.nextInt()==2) return false;
         vd.getVehicle().setOutTime(out);
         print(num, vd.getVehicle());
         IO.println("Out Time : " + vd.getVehicle().getOutTime().format(value));
         IO.print("\n");
-        long totalTime = Duration.between(vd.getVehicle().getInTime(), vd.getVehicle().getOutTime()).toMinutes();
         Bill bill = new Bill();
         bill.setTotalTime(totalTime);
-        bill.setStatus(false);
-        IO.print("\n Bill for this vehicle : " + num + "\n");
-        IO.print("Total Time in form of Minutes : " + bill.getTotalAmount() + "\n");
+        bill.calculateBill();
+        bill.setStatus(bill.getTotalAmount() == 0);
+        vd.setBill(bill);
+        IO.print("\nBill for this vehicle : " + num + "\n");
+        IO.print("Total time in form of minutes : " + bill.getTotalTime() + "\n");
+        IO.print("Total rounded bill : " + bill.getTotalAmount() + "\n");
+        IO.print("Status for this bill : ");
+        IO.print(bill.getStatus()==true?"Paid\n" : "Not paid\n");
         return true;
     }
 

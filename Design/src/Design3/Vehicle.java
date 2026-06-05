@@ -1,5 +1,6 @@
 package Design3;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class Vehicle {
@@ -45,5 +46,9 @@ public class Vehicle {
 
     public Integer getEnd() {
         return end;
+    }
+
+    public long calculateTime(LocalDateTime appOutTime) {
+         return Duration.between(inTime, appOutTime).toMinutes();
     }
 }
