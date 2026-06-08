@@ -44,10 +44,20 @@ public class Main {
 
     static void print(String num, Vehicle vd) {
         IO.println("\n" + num + " Vehicle details : ");
+        IO.println("Vehicle Type : " + vd.getVehicle());
         IO.println("Parking Floor : " + (vd.getFloor()+1));
         IO.println("Starting Column : " + (vd.getStart()+1));
         IO.println("Ending Column : " + (vd.getEnd()+1));
         IO.println("In Time : " + vd.getInTime().format(value));
+    }
+
+    static void printBill(String num, VB vd) {
+        IO.print("\nBill for this vehicle : " + num + "\n");
+        IO.print("Vehicle Type : " + vd.getVehicle().getVehicle() + "\n");
+        IO.print("Total time in form of minutes : " + vd.getBill().getTotalTime() + "\n");
+        IO.print("Total rounded bill : " + vd.getBill().getTotalAmount() + "\n");
+        IO.print("Status for this bill : ");
+        IO.print(vd.getBill().getStatus()==true?"Paid\n" : "Not paid\n");
     }
 
     static void message() {
@@ -62,6 +72,24 @@ public class Main {
             return "";
         }
         return num;
+    }
+
+    static void checkOut(Integer floor, Integer start, Integer end) {
+        Vector<Vector<Boolean>> f = Floors.getFloors();
+        while(start <= end) {
+            f.get(floor).set(start++, false);
+        }
+    }
+
+    static Payment payMent(Scanner scanner, long totalAmount) {
+        IO.print("\nSelect the payment method : \n");
+        IO.print("""
+                1.UPI
+                2.Card
+                3.Net Banking
+                """);
+        IO.print("Enter the payment method number for pay your bill amount " + totalAmount + " : ");
+        return new Payment(scanner.nextLine());
     }
 
     static void start(Scanner scanner, Details d1) {
@@ -142,33 +170,45 @@ public class Main {
         if(num.isEmpty()) return;
         VB vd = Details.value.get(num);
         print(num, vd.getVehicle());
-        bill(scanner, value);
+        bill(scanner, num, value);
         IO.print("\n");
     }
 
-    static Boolean bill(Scanner scanner, DateTimeFormatter value) {
-        String num = check(scanner);
+    static Boolean bill(Scanner scanner, String num, DateTimeFormatter value) {
+        if(num.isEmpty()) num = check(scanner);
         if(num.isEmpty()) return false;
         LocalDateTime out = LocalDateTime.now();
         VB vd = Details.value.get(num);
         long totalTime = vd.getVehicle().calculateTime(out);
         IO.print("Total time in form of minutes : " + totalTime);
+        if(vd.getBill() !=  null && vd.getBill().getStatus()) {
+            IO.println("\nBill already paid");
+            printBill(num, vd);
+            return false;
+        }
         IO.print("\nIf you want to generate your bill, please enter 1 else 2 : ");
         if(scanner.nextInt()==2) return false;
         vd.getVehicle().setOutTime(out);
         print(num, vd.getVehicle());
         IO.println("Out Time : " + vd.getVehicle().getOutTime().format(value));
-        IO.print("\n");
+        checkOut(vd.getVehicle().getFloor(), vd.getVehicle().getStart(), vd.getVehicle().getEnd());
         Bill bill = new Bill();
         bill.setTotalTime(totalTime);
-        bill.calculateBill();
+        bill.calculateBill(vd.getVehicle().getSize());
         bill.setStatus(bill.getTotalAmount() == 0);
         vd.setBill(bill);
-        IO.print("\nBill for this vehicle : " + num + "\n");
-        IO.print("Total time in form of minutes : " + bill.getTotalTime() + "\n");
-        IO.print("Total rounded bill : " + bill.getTotalAmount() + "\n");
-        IO.print("Status for this bill : ");
-        IO.print(bill.getStatus()==true?"Paid\n" : "Not paid\n");
+        printBill(num, vd);
+        if(vd.getBill().getStatus()) return false;
+        IO.print("Press 1 to pay the bill or press 2 for pay later : ");
+        if(scanner.nextInt()==2) return false;
+        scanner.nextLine();
+        Payment payment = payMent(scanner, vd.getBill().getTotalAmount());
+        IO.print("\n");
+        vd.setPayment(payment);
+        vd.getBill().setStatus(payment.getStatueforTID());
+        IO.println("\nYou successfully done the payment");
+        IO.println("Your payment type : " + vd.getPayment().getPaymentType());
+        IO.println("Your transaction id : " + vd.getPayment().getTransactionId());
         return true;
     }
 
@@ -190,7 +230,7 @@ public class Main {
             if (v == 1) start(scanner, d1);
             else if(v == 2) view(scanner, value);
             else if(v == 3) {
-                if(bill(scanner, value)) {
+                if(bill(scanner, "", value)) {
                     IO.print("\nThanks for you time, have a great day");
                     break;
                 }

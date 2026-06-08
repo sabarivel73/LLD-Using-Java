@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 
 public class Vehicle {
 
+    private String vehicle;
     private Integer Size;
     private Integer floor;
     private Integer start;
@@ -12,7 +13,8 @@ public class Vehicle {
     private LocalDateTime inTime;
     private LocalDateTime outTime;
 
-    Vehicle(Integer size, Integer floor, Integer start, Integer end, LocalDateTime inTime) {
+    Vehicle(String vehicle, Integer size, Integer floor, Integer start, Integer end, LocalDateTime inTime) {
+        this.vehicle = vehicle;
         this.Size = size;
         this.floor = floor;
         this.start = start;
@@ -47,6 +49,8 @@ public class Vehicle {
     public Integer getEnd() {
         return end;
     }
+
+    public String getVehicle() { return vehicle; }
 
     public long calculateTime(LocalDateTime appOutTime) {
          return Duration.between(inTime, appOutTime).toMinutes();
