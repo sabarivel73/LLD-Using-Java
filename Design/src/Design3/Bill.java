@@ -24,7 +24,7 @@ public class Bill {
     }
 
     public void calculateBill(Integer size) {
-        totalAmount = Math.round(totalTime * 5); //0.0208333333
+        totalAmount = Math.round(totalTime * 0.0208333333);
         totalAmount *= size;
     }
 }
